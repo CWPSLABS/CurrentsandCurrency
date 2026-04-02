@@ -1,15 +1,13 @@
 // ============================================
 // app.js — Main Entry Point
-// Initialises all widgets and wires up controls
 // ============================================
 import { detectLocation }     from './modules/locationDetect.js';
 import { initWeatherWidget }  from './modules/weatherWidget.js';
 import { initCurrencyWidget } from './modules/currencyWidget.js';
 import { initCryptoWidget }   from './modules/cryptoWidget.js';
-import { initStocksWidget }   from './modules/stocksWidget.js';
-import { initFuelWidget }     from './modules/fuelWidget.js';
 import { formatTime }         from './utils/formatter.js';
 import { cache }              from './utils/cache.js';
+
 // ---- CLOCK ------------------------------------------------
 function startClock() {
   const el = document.getElementById('current-time');
@@ -17,6 +15,12 @@ function startClock() {
   const tick = () => { el.textContent = formatTime(); };
   tick();
   setInterval(tick, 1000);
+}
+
+// ---- COPYRIGHT YEAR ---------------------------------------
+function setCopyrightYear() {
+  const el = document.getElementById('footer-year');
+  if (el) el.textContent = new Date().getFullYear();
 }
 
 // ---- TICKER -----------------------------------------------
@@ -37,7 +41,12 @@ function buildTicker(fxRows = [], cryptoCoins = []) {
     })),
   ];
 
-  // Duplicate items for seamless infinite scroll
+  if (!items.length) {
+    track.innerHTML = '<span style="color:var(--text-muted)">No data available</span>';
+    return;
+  }
+
+  // Duplicate for seamless infinite scroll
   const html = [...items, ...items].map(item => {
     let changeHtml = '';
     if (item.change != null) {
@@ -64,10 +73,9 @@ function wireRefreshButtons(lat, lng, city) {
       const target = btn.dataset.target;
       btn.classList.add('spinning');
 
-      // Clear cache so the widget re-fetches fresh data
-      cache.clear(`${target}_${lat}_${lng}`); // weather
-      cache.clear(`${target}_ghs`);           // currency
-      cache.clear(`${target}_prices`);        // crypto
+      cache.clear(`weather_${lat}_${lng}`);
+      cache.clear('currency_ghs');
+      cache.clear('crypto_prices');
 
       try {
         if (target === 'weather')  await initWeatherWidget(lat, lng, city);
@@ -83,33 +91,23 @@ function wireRefreshButtons(lat, lng, city) {
 // ---- BOOT -------------------------------------------------
 async function boot() {
   startClock();
+  setCopyrightYear();
 
-  // 1. Detect location first (weather depends on it)
+  // 1. Detect location
   const { lat, lng, city } = await detectLocation();
 
-  // 2. Load synchronous widgets immediately (no API calls)
-  initStocksWidget();
-  initFuelWidget();
-
-  // 3. Load async widgets in parallel
-  const [fxRows, cryptoCoins] = await Promise.all([
+  // 2. Load all three widgets in parallel
+  const [, fxRows, cryptoCoins] = await Promise.all([
     initWeatherWidget(lat, lng, city),
     initCurrencyWidget(),
     initCryptoWidget(),
-  ]).then(results => [results[1] ?? [], results[2] ?? []]);
-
-  // 4. Build the ticker once we have FX + crypto data
-  const [fxData, cryptoData] = await Promise.all([
-    initCurrencyWidget(),
-    initCryptoWidget(),
   ]);
-  buildTicker(fxData ?? [], cryptoData ?? []);
 
-  // 5. Wire refresh buttons
+  // 3. Build ticker
+  buildTicker(fxRows ?? [], cryptoCoins ?? []);
+
+  // 4. Wire refresh buttons
   wireRefreshButtons(lat, lng, city);
 }
 
 document.addEventListener('DOMContentLoaded', boot);
-
-// Auto-update copyright year
-document.getElementById('footer-year').textContent = new Date().getFullYear();
