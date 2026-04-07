@@ -1,6 +1,6 @@
-// ============================================
+
 // modules/cryptoWidget.js
-// ============================================
+
 import { fetchCryptoPrices } from '../api/crypto.js';
 import { formatUSD, formatChange } from '../utils/formatter.js';
 import { renderError } from '../utils/errorHandler.js';
