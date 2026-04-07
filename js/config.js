@@ -1,12 +1,13 @@
-// ============================================
+
 // config.js — API Keys & App Constants
-// ============================================
+
 
 export const CONFIG = {
   // --- API Keys ---
-  // Open-Meteo: no key needed (free, no signup)
+ //Weather API 
   // CoinGecko: no key needed for public endpoints
-  EXCHANGERATE_API_KEY:'66fbbb9ba6475aaf5199366e', // https://app.exchangerate-api.com/
+EXCHANGERATE_API_KEY: '66fbbb9ba6475aaf5199366e',
+WEATHERAPI_KEY: '656970e136eab0350ba1a9e1447b3c92',  // ← add this line
 
   // --- Default Location (Accra, Ghana) ---
   DEFAULT_LAT: 5.6037,
