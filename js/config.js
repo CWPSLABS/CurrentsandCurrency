@@ -7,7 +7,7 @@ export const CONFIG = {
  //Weather API 
   // CoinGecko: no key needed for public endpoints
 EXCHANGERATE_API_KEY: '66fbbb9ba6475aaf5199366e',
-WEATHERAPI_KEY: 'ae0ba9d92e1362a424fd31c6615a7f3e', 
+WEATHERAPI_KEY: '84b556981ae5485cb6a81612260704', 
 
   // --- Default Location (Accra, Ghana) ---
   DEFAULT_LAT: 5.6037,
@@ -26,8 +26,8 @@ WEATHERAPI_KEY: 'ae0ba9d92e1362a424fd31c6615a7f3e',
 
   // --- API Base URLs ---
   URLS: {
-    weather:  'https://api.open-meteo.com/v1/forecast',
-    geocode:  'https://geocoding-api.open-meteo.com/v1/search',
+    weather: 'https://api.weatherapi.com/v1',
+    geocode:  'https://api.weatherapi.com/v1/search.json',
     currency: 'https://v6.exchangerate-api.com/v6',
     crypto:   'https://api.coingecko.com/api/v3',
   },
